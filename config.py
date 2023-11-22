@@ -53,9 +53,9 @@ subFolderNameGeneratorFunc = None
 scaleFrameTo = None
 
 # codec for output files
-FOURCC_CODEC = "DIVX"
-OUTPUT_FILES_EXTENSION = ".avi"
-OUTPUT_FRAME_RATE = 20
+FOURCC_CODEC = "mp4v"
+OUTPUT_FILES_EXTENSION = ".mp4"
+OUTPUT_FRAME_RATE = 15
 
 # loading machine specific configuration
 if os.path.exists(os.path.join(APP_ROOT, "machine_specific_configuration.py")):

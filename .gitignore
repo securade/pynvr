@@ -98,3 +98,5 @@ doc
 *.mpeg
 *.mp4
 *.flv
+.DS_Store
+.venv/
