@@ -127,7 +127,9 @@ class MotionDrivenRecorder(CameraConnectionSupport):
 
         # calculation output filename
         now = dts.datetime.utcnow()
-        fileName = "video_{}{}".format(now.strftime("%Y%m%dT%H%M%S"), config.OUTPUT_FILES_EXTENSION)
+        t = time.localtime()
+        # fileName = "video_{}{}".format(now.strftime("%Y%m%dT%H%M%S"), config.OUTPUT_FILES_EXTENSION)
+        fileName = "video_{}{}".format(time.strftime("%H-%M-%S", t), config.OUTPUT_FILES_EXTENSION)
 
         subFolder = self._getSubFolderName(now)
         if subFolder is not None:

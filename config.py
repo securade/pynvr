@@ -3,6 +3,9 @@ import logging
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
+def subFolderNameForDtsGeneratorFunc(dts):
+    return "{:04}-{:02}-{:02}".format(dts.year, dts.month, dts.day)
+
 #######################
 #   camera settings   #
 #######################
@@ -43,14 +46,14 @@ MINIMAL_MOTION_DURATION = 10
 ##########################
 PRE_ALARM_RECORDING_SECONDS = 5
 PATH_FOR_VIDEO = "./video"
-subFolderNameGeneratorFunc = None
+subFolderNameGeneratorFunc = subFolderNameForDtsGeneratorFunc
 
 ############################################
 #   quality and codec settings for video   #
 ############################################
 
 # scaleFrameTo = (500, 500) #(width, height)
-scaleFrameTo = None
+scaleFrameTo = (800, 600)
 
 # codec for output files
 FOURCC_CODEC = "mp4v"
