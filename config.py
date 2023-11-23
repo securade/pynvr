@@ -53,7 +53,7 @@ subFolderNameGeneratorFunc = subFolderNameForDtsGeneratorFunc
 ############################################
 
 # scaleFrameTo = (500, 500) #(width, height)
-scaleFrameTo = (800, 600)
+scaleFrameTo = (640, 480)
 
 # codec for output files
 FOURCC_CODEC = "mp4v"
