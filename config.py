@@ -38,13 +38,13 @@ LOG_TO_CONSOLE = True
 #################################
 #   motion detection settings   #
 #################################
-INITIAL_WAIT_INTERVAL_BEFORE_MOTION_DETECTION_SECS = 5
-MINIMAL_MOTION_DURATION = 10
+INITIAL_WAIT_INTERVAL_BEFORE_MOTION_DETECTION_SECS = 4
+MINIMAL_MOTION_DURATION = 8
 
 ##########################
 #   recording settings   #
 ##########################
-PRE_ALARM_RECORDING_SECONDS = 5
+PRE_ALARM_RECORDING_SECONDS = 4
 PATH_FOR_VIDEO = "./video"
 subFolderNameGeneratorFunc = subFolderNameForDtsGeneratorFunc
 
@@ -56,7 +56,7 @@ subFolderNameGeneratorFunc = subFolderNameForDtsGeneratorFunc
 scaleFrameTo = (640, 480)
 
 # codec for output files
-FOURCC_CODEC = "mp4v"
+FOURCC_CODEC = "avc1"
 OUTPUT_FILES_EXTENSION = ".mp4"
 OUTPUT_FRAME_RATE = 15
 
