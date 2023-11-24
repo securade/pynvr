@@ -207,6 +207,8 @@ class MotionDrivenRecorder(CameraConnectionSupport):
         prev_logged_left_seconds = None
 
         bad_frames = 0
+        
+        start_time = time.time()
 
         while not self._quit:
             self._process_queue_commands()
@@ -276,57 +278,75 @@ class MotionDrivenRecorder(CameraConnectionSupport):
                 # TODO: need process when recording now, or will be exception!
                 self.onFrameSizeUpdate(frameWidth, frameHeight)
 
-            # detecting motion
-            motionDetected = self._detect_motion(current_frame, instant)
+            if (config.MINIMAL_MOTION_DURATION > 0) :
+                # detecting motion
+                motionDetected = self._detect_motion(current_frame, instant)
 
-            now = self.utcNow()
-            # prolongating motion for minimal motion duration
-            if (not motionDetected) and (self.detector.motionDetectionDts is not None):
-                minDuration = self.detector.motionDetectionDts + dts.timedelta(seconds=config.MINIMAL_MOTION_DURATION)
-                if minDuration > now:
-                    motionDetected = True
+                now = self.utcNow()
+                # prolongating motion for minimal motion duration
+                if (not motionDetected) and (self.detector.motionDetectionDts is not None):
+                    minDuration = self.detector.motionDetectionDts + dts.timedelta(seconds=config.MINIMAL_MOTION_DURATION)
+                    if minDuration > now:
+                        motionDetected = True
 
-            # clearing motion detection flag when needed
-            if not motionDetected:
-                self.inMotionDetectedState = False
+                # clearing motion detection flag when needed
+                if not motionDetected:
+                    self.inMotionDetectedState = False
+
+                    if self._isRecording:
+                        self.logger.info("stopping recording...")
+                        self._stopRecording()
+
+                elif not self._isRecording:
+                    self.logger.info("starting recording...")
+                    self._startRecording()
+                    self._flushPreRecordingFrames()
+
+                # calculating left seconds for motion (for further use in label)
+                dx = 0
+                if motionDetected:
+                    dx = now - self.detector.motionDetectionDts
+                    dx = config.MINIMAL_MOTION_DURATION - dx.seconds
+
+                    if (prev_logged_left_seconds != dx):
+                        self.logger.info("left seconds for motion recording: {}".format(dx))
+                        prev_logged_left_seconds = dx
+
+                # adding label for frame with detected motion
+                if motionDetected:
+                    text = "MOTION DETECTED [{}]".format(dx)
+                    cv.putText(
+                        current_frame,
+                        text,
+                        (10, 20),
+                        cv.FONT_HERSHEY_SIMPLEX,
+                        0.5,
+                        (0, 0, 255),  # b g r
+                        2
+                    )
 
                 if self._isRecording:
-                    self.logger.info("stopping recording...")
-                    self._stopRecording()
-
-            elif not self._isRecording:
-                self.logger.info("starting recording...")
-                self._startRecording()
-                self._flushPreRecordingFrames()
-
-            # calculating left seconds for motion (for further use in label)
-            dx = 0
-            if motionDetected:
-                dx = now - self.detector.motionDetectionDts
-                dx = config.MINIMAL_MOTION_DURATION - dx.seconds
-
-                if (prev_logged_left_seconds != dx):
-                    self.logger.info("left seconds for motion recording: {}".format(dx))
-                    prev_logged_left_seconds = dx
-
-            # adding label for frame with detected motion
-            if motionDetected:
-                text = "MOTION DETECTED [{}]".format(dx)
-                cv.putText(
-                    current_frame,
-                    text,
-                    (10, 20),
-                    cv.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    (0, 0, 255),  # b g r
-                    2
-                )
-
-            if self._isRecording:
+                    self._writeOutFrame(current_frame)
+            
+            else:
+                if (time.time() - start_time > config.INITIAL_WAIT_INTERVAL_BEFORE_MOTION_DETECTION_SECS):
+                    if self._isRecording:
+                        self.logger.info("stopping recording...")
+                        self._stopRecording()
+                        
+                    self.logger.info("starting recording...")
+                    self._startRecording()
+                    start_time = time.time()
+                else:  
+                    if not self._isRecording:
+                        self.logger.info("starting recording...")
+                        self._startRecording()
+                
                 self._writeOutFrame(current_frame)
 
         # stop recording if now recording
         if self._isRecording:
+            self.logger.info("stopping recording...")
             self._stopRecording()
 
         if self.cap is not None:

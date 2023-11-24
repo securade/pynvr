@@ -38,13 +38,13 @@ LOG_TO_CONSOLE = True
 #################################
 #   motion detection settings   #
 #################################
-INITIAL_WAIT_INTERVAL_BEFORE_MOTION_DETECTION_SECS = 4
-MINIMAL_MOTION_DURATION = 8
+INITIAL_WAIT_INTERVAL_BEFORE_MOTION_DETECTION_SECS = 3600
+MINIMAL_MOTION_DURATION = 0
 
 ##########################
 #   recording settings   #
 ##########################
-PRE_ALARM_RECORDING_SECONDS = 4
+PRE_ALARM_RECORDING_SECONDS = 0
 PATH_FOR_VIDEO = "./video"
 subFolderNameGeneratorFunc = subFolderNameForDtsGeneratorFunc
 
